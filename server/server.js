@@ -1,0 +1,32 @@
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+mongoose.connect('mongodb+srv://shirishagundu618_db_user:Shirisha123@cluster0.dwq8vle.mongodb.net/hospital?appName=Cluster0')
+.then(() => console.log('✅ MongoDB Connected to Atlas - LIFETIME READY!'))
+.catch(err => console.log('DB Error:', err));
+
+const PatientSchema = new mongoose.Schema({
+  name: String,
+  age: Number,
+  disease: String,
+  room: String
+});
+const Patient = mongoose.model('Patient', PatientSchema);
+
+app.get('/patients', async (req,res) => {
+  const patients = await Patient.find();
+  res.json(patients);
+});
+
+app.post('/patients', async (req,res) => {
+  const p = new Patient(req.body);
+  await p.save();
+  res.json(p);
+});
+
+app.listen(5000, () => console.log('Backend running on 5000'));
